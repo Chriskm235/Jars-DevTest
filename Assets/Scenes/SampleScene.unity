@@ -1078,6 +1078,7 @@ MonoBehaviour:
   - {fileID: 7400000, guid: 569a82815bc464f40b8921deefd0f4cd, type: 2}
   - {fileID: 7400000, guid: 6ea300c3b6ba6454e939d6c55c299d02, type: 2}
   - {fileID: 7400000, guid: 7aee7d772164d4861b2c5baf92593bc3, type: 2}
+  idleClip: {fileID: 7400000, guid: 4bd38a047d5e64ad8846411ff453afa8, type: 2}
 --- !u!1 &1812723158
 GameObject:
   m_ObjectHideFlags: 0
