@@ -1,3 +1,4 @@
+using Animancer;
 using TMPro;
 using UnityEngine;
 
@@ -7,6 +8,10 @@ namespace Jars.DevTest
     {
         [SerializeField] TextMeshProUGUI text;
 
+        public UnityEvent OnClicked;
+
         public void Init(string category) => text.text = category;
+
+        public void TriggerClick() => OnClicked.Invoke();
     }
 }

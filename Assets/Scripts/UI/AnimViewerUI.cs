@@ -12,14 +12,15 @@ namespace Jars.DevTest
         [SerializeField] Transform animElementParent;
         [SerializeField] GameObject animElementPrefab;
 
-        List<GameObject> currentElements = new List<GameObject>();
+        List<GameObject> tabElements = new List<GameObject>();
+        List<GameObject> animElements = new List<GameObject>();
         string selectedCategory;
 
         void Populate()
         {
-            foreach (var e in currentElements)
+            foreach (var e in tabElements)
                 Destroy(e);
-            currentElements.Clear();
+            tabElements.Clear();
 
             // Meow
             var cats = library.anims
@@ -31,20 +32,48 @@ namespace Jars.DevTest
             foreach (var c in cats)
             {
                 var newGo = Instantiate(tabElementPrefab, tabElementParent);
-                currentElements.Add(newGo);
-                newGo.GetComponent<CategoryElementUI>().Init(c);
+                tabElements.Add(newGo);
+
+                var category = c;
+                var element = newGo.GetComponent<CategoryElementUI>();
+                element.Init(category);
+                element.OnClicked.AddListener(() =>
+                {
+                    selectedCategory = category;
+                    PopulateAnims();
+                });
             }
+
+            PopulateAnims();
+        }
+
+        void PopulateAnims()
+        {
+            foreach (var e in animElements)
+                Destroy(e);
+            animElements.Clear();
 
             var filtered = library.anims
                 .Where(a => a.category == selectedCategory);
             foreach (var a in filtered)
             {
                 var newGo = Instantiate(animElementPrefab, animElementParent);
-                currentElements.Add(newGo);
-                newGo.GetComponent<AnimElementUI>().Init(a);
+                animElements.Add(newGo);
+
+                var element = newGo.GetComponent<AnimElementUI>();
+                var anim = a;
+                element.Init(a);
+                element.OnClicked.AddListener(() =>
+                {
+                    //Play Animation
+                    Debug.Log(anim.name);
+                });
             }
         }
 
-        private void Start() => Populate();
+        private void Start()
+        {
+            Populate();
+        }
     }
 }
