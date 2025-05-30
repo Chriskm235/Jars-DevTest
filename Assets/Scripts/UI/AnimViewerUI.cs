@@ -14,8 +14,8 @@ namespace Jars.DevTest
         [SerializeField] GameObject animElementPrefab;
         [SerializeField] ViewerState state;
 
-        List<GameObject> tabElements = new List<GameObject>();
-        List<GameObject> animElements = new List<GameObject>();
+        [SerializeField] List<GameObject> tabElements = new List<GameObject>();
+        [SerializeField] List<GameObject> animElements = new List<GameObject>();
 
         void Populate()
         {
@@ -30,6 +30,7 @@ namespace Jars.DevTest
 
             state.category.Value = cats.FirstOrDefault();
 
+            var isFirst = true;
             foreach (var c in cats)
             {
                 var newGo = Instantiate(tabElementPrefab, tabElementParent);
@@ -38,7 +39,13 @@ namespace Jars.DevTest
                 var category = c;
                 var element = newGo.GetComponent<CategoryElementUI>();
                 element.Init(category);
-                element.OnClicked.AddListener(() => state.category.Value = category);
+                element.OnClicked.AddListener(() =>
+                {
+                    state.category.Value = category;
+                    element.Highlight();
+                });
+                if (isFirst) element.Highlight();
+                isFirst = false;
             }
 
             PopulateAnims();
