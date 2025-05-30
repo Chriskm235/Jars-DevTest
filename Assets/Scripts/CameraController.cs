@@ -12,24 +12,12 @@ namespace Jars.DevTest
 
         Camera camera;
 
-        Quaternion offsetRot;
+        Quaternion goalRot;
+        Quaternion currentRot;
 
         private void Awake()
         {
             camera = GetComponent<Camera>();
-        }
-
-        private void Start()
-        {
-            // NOTE: This behavior was being all jittery when I did it every update,
-            //  so instead I cache it
-
-            // Find the center and aim array so we know how much to offset the rotation
-            var aimRay = camera.ViewportPointToRay(new Vector2(.75f, .5f));
-            var centerRay = camera.ViewportPointToRay(new Vector2(.5f, .5f));
-
-            // Find how much to offset from the target's direction
-            offsetRot = Quaternion.FromToRotation(aimRay.direction, centerRay.direction);
         }
 
         private void Update()
@@ -37,9 +25,6 @@ namespace Jars.DevTest
             ApplyPosition();
             ApplyRotation();
         }
-
-        Quaternion goalRot;
-        Quaternion currentRot;
 
         void ApplyPosition()
         {
@@ -58,6 +43,13 @@ namespace Jars.DevTest
         void ApplyRotation()
         {
             var targetDir = (target.position - transform.position).normalized;
+
+            // Find the center and aim array so we know how much to offset the rotation
+            var aimRay = camera.ViewportPointToRay(new Vector2(.75f, .5f));
+            var centerRay = camera.ViewportPointToRay(new Vector2(.5f, .5f));
+
+            // Find how much to offset from the target's direction
+            var offsetRot = Quaternion.FromToRotation(aimRay.direction, centerRay.direction);
 
             // Set the dir to target dir rotated by the offset
             transform.rotation = Quaternion.LookRotation((offsetRot * targetDir).normalized);
