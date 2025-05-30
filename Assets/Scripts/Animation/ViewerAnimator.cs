@@ -19,24 +19,50 @@ namespace Jars.DevTest
 
         private void Start()
         {
-            state.clip
-                .Select(c => c ?? idleClip)
-                .Subscribe(c => StartCoroutine(TweenToAnimation(c)))
+            state.clipData
+                .Select(c => c ?? new AnimationData
+                {
+                    clip = idleClip
+                })
+                .Pairwise()
+                .Subscribe(p => StartCoroutine(TweenToAnimation(p.Current, p.Previous)))
                 .AddTo(this);
         }
 
-        IEnumerator TweenToAnimation(AnimationClip clip)
+        IEnumerator TweenToAnimation(AnimationData data, AnimationData prev)
         {
             while (isTweening)
                 yield return null;
             isTweening = true;
 
             float fadeTime = .25f;
-            anim.Play(idleClip, fadeTime);
-            yield return new WaitForSeconds(fadeTime);
-            anim.transform.position = animBasePos;
+            if (prev.exitClip != null)
+            {
+                var state = anim.Play(prev.exitClip);
+                var done = false;
+                state.Events(this).OnEnd ??= () => done = true;
+                while (!done)
+                    yield return null;
+            }
+            else
+            {
+                anim.Play(idleClip, fadeTime);
+                yield return new WaitForSeconds(fadeTime);
+            }
 
-            anim.Play(clip, fadeTime);
+            if (data.enterClip != null)
+            {
+                var state = anim.Play(data.enterClip);
+                var done = false;
+                state.Events(this).OnEnd ??= () => done = true;
+                while (!done)
+                    yield return null;
+                anim.Play(data.clip);
+            }
+            else
+                anim.Play(data.clip, fadeTime);
+
+            //anim.transform.position = animBasePos;
 
             isTweening = false;
         }

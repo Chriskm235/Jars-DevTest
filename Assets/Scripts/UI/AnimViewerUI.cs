@@ -67,7 +67,7 @@ namespace Jars.DevTest
                 var element = newGo.GetComponent<AnimElementUI>();
                 var anim = a;
                 element.Init(a);
-                element.OnClicked.AddListener(() => state.clip.Value = anim.clip);
+                element.OnClicked.AddListener(() => state.clipData.Value = anim);
             }
         }
 

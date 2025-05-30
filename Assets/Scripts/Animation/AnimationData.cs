@@ -6,6 +6,8 @@ namespace Jars.DevTest
     public class AnimationData : ScriptableObject
     {
         public AnimationClip clip;
+        public AnimationClip enterClip;
+        public AnimationClip exitClip;
         public string category;
     }
 }

@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: JumpPushUp
   m_EditorClassIdentifier: 
   clip: {fileID: 7400000, guid: 9b3cf217edf514bf58a762cf76c7c869, type: 2}
+  enterClip: {fileID: 7400000, guid: ec427417d01d0490bb157d4911ec318b, type: 2}
+  exitClip: {fileID: 7400000, guid: 466ea6cc45bed40f6bba6837f4a265b3, type: 2}
   category: Jump
