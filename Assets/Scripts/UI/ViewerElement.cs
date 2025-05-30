@@ -7,11 +7,17 @@ namespace Jars.DevTest
     {
         [SerializeField] ViewerState viewerState;
         [SerializeField] Vector2 rotationSpeed = new Vector2(15, 15);
+        [SerializeField] Vector2 startRot;
 
         bool mouseOver;
 
         public void OnPointerEnter(PointerEventData eventData) => mouseOver = true;
         public void OnPointerExit(PointerEventData eventData) => mouseOver = false;
+
+        private void Awake()
+        {
+            viewerState.inputRot.Value = startRot;
+        }
 
         void Update()
         {
