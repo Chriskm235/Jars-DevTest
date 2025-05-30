@@ -1,4 +1,6 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Animancer;
 using UnityEngine;
 
@@ -11,6 +13,8 @@ namespace Jars.DevTest
         [SerializeField] AnimationClip idleClip;
 
         Vector3 animBasePos;
+        Vector3 posVel;
+        bool isTweening;
 
         private void Awake()
         {
@@ -26,10 +30,18 @@ namespace Jars.DevTest
 
         IEnumerator TweenToAnimation(AnimationClip clip)
         {
-            float fadeTime = 1f;
-            anim.Play(idleClip, fadeTime / 2);
-            yield return new WaitForSeconds(fadeTime / 2);
-            anim.Play(clip, fadeTime / 2);
+            while (isTweening)
+                yield return null;
+            isTweening = true;
+
+            float fadeTime = .25f;
+            anim.Play(idleClip, fadeTime);
+            yield return new WaitForSeconds(fadeTime);
+            anim.transform.position = animBasePos;
+
+            anim.Play(clip, fadeTime);
+
+            isTweening = false;
         }
     }
 }
