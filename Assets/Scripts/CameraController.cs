@@ -8,6 +8,7 @@ namespace Jars.DevTest
     {
         [SerializeField] Transform target;
         [SerializeField] float cameraRange = 10;
+        [SerializeField] float floorY = .5f;
         [SerializeField] ViewerState viewerState;
 
         Camera camera;
@@ -37,7 +38,9 @@ namespace Jars.DevTest
             currentRot = Quaternion.Slerp(currentRot, goalRot, 5f * Time.deltaTime);
 
             // Set the pos to be offset from the bounds based on rotation and range
-            transform.position = target.position - currentRot * Vector3.forward * cameraRange;
+            var pos = target.position - currentRot * Vector3.forward * cameraRange;
+            pos.y = Mathf.Clamp(pos.y, floorY, float.MaxValue);
+            transform.position = pos;
         }
 
         void ApplyRotation()
