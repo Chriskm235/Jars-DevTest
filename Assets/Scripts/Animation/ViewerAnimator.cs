@@ -57,12 +57,11 @@ namespace Jars.DevTest
                 state.Events(this).OnEnd ??= () => done = true;
                 while (!done)
                     yield return null;
-                anim.Play(data.clip);
             }
-            else
-                anim.Play(data.clip, fadeTime);
 
-            //anim.transform.position = animBasePos;
+            anim.transform.position = animBasePos;
+            anim.Play(data.clip, fadeTime);
+
 
             isTweening = false;
         }
