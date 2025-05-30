@@ -6,7 +6,7 @@ namespace Jars.DevTest
     [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] Renderer target;
+        [SerializeField] Transform target;
         [SerializeField] float cameraRange = 10;
         [SerializeField] ViewerState viewerState;
 
@@ -38,21 +38,26 @@ namespace Jars.DevTest
             ApplyRotation();
         }
 
+        Quaternion goalRot;
+        Quaternion currentRot;
+
         void ApplyPosition()
         {
-            var quatRotation = Quaternion.identity;
+            goalRot = Quaternion.identity;
             var xRotation = Quaternion.AngleAxis(viewerState.inputRot.x, Vector3.up);
             var yRotation = Quaternion.AngleAxis(viewerState.inputRot.y, xRotation * Vector3.right);
-            quatRotation *= yRotation;
-            quatRotation *= xRotation;
+            goalRot *= yRotation;
+            goalRot *= xRotation;
+
+            currentRot = Quaternion.Slerp(currentRot, goalRot, 5f * Time.deltaTime);
 
             // Set the pos to be offset from the bounds based on rotation and range
-            transform.position = target.bounds.center - quatRotation * Vector3.forward * cameraRange;
+            transform.position = target.position - currentRot * Vector3.forward * cameraRange;
         }
 
         void ApplyRotation()
         {
-            var targetDir = (target.bounds.center - transform.position).normalized;
+            var targetDir = (target.position - transform.position).normalized;
 
             // Set the dir to target dir rotated by the offset
             transform.rotation = Quaternion.LookRotation((offsetRot * targetDir).normalized);

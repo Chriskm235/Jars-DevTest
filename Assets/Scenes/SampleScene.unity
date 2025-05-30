@@ -119,6 +119,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &233404291
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 233404292}
+  m_Layer: 0
+  m_Name: CameraTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &233404292
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 233404291}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1812723159}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -269,7 +300,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 302dd71700dae490ab3ac8147af25d8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1044064582}
+  target: {fileID: 233404292}
   cameraRange: 3
   viewerState: {fileID: 650091121}
 --- !u!1 &410087039
@@ -670,11 +701,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 895449289}
   m_CullTransparentMesh: 1
---- !u!137 &1044064582 stripped
-SkinnedMeshRenderer:
-  m_CorrespondingSourceObject: {fileID: 7697560214703929333, guid: e2a436cffd4ce43f8b13a85aad5049b3, type: 3}
-  m_PrefabInstance: {fileID: 5724762691019697817}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1090666591 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2005514203059894808, guid: e2a436cffd4ce43f8b13a85aad5049b3, type: 3}
@@ -1108,6 +1134,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 233404292}
   - {fileID: 1090666591}
   - {fileID: 1347070895}
   m_Father: {fileID: 0}
