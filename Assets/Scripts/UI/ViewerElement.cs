@@ -18,7 +18,7 @@ namespace Jars.DevTest
             if (mouseOver && Input.GetKey(KeyCode.Mouse0))
             {
                 var delta = new Vector3(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-                var inputRot = viewerState.inputRot;
+                var inputRot = viewerState.inputRot.Value;
 
                 // Apply x delta
                 inputRot += Vector2.right * delta.x * rotationSpeed.x;
@@ -28,7 +28,7 @@ namespace Jars.DevTest
                 inputRot += Vector2.up * delta.y * rotationSpeed.y;
                 inputRot.y = Mathf.Clamp(inputRot.y, -15f, 45f);
 
-                viewerState.inputRot = inputRot;
+                viewerState.inputRot.Value = inputRot;
             }
         }
     }

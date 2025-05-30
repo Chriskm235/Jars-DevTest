@@ -1011,7 +1011,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c9f64f3246fe4a1eaf3e7c5822af69d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputRot: {x: 0, y: 0}
 --- !u!4 &650091122
 Transform:
   m_ObjectHideFlags: 0
@@ -1269,7 +1268,7 @@ GameObject:
   - component: {fileID: 895449292}
   - component: {fileID: 895449291}
   m_Layer: 5
-  m_Name: Panel
+  m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2932,6 +2931,7 @@ MonoBehaviour:
   tabElementPrefab: {fileID: 7490547311287589341, guid: 8b566960394374b3bb7865436bab8950, type: 3}
   animElementParent: {fileID: 1331522025}
   animElementPrefab: {fileID: 6926869804607862839, guid: 7ded0c29bcb7f4a3aa5bb128b741bdd7, type: 3}
+  state: {fileID: 650091121}
 --- !u!1 &1812723158
 GameObject:
   m_ObjectHideFlags: 0
@@ -3482,6 +3482,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9092625311397426326, guid: e2a436cffd4ce43f8b13a85aad5049b3, type: 3}
+      propertyPath: state
+      value: 
+      objectReference: {fileID: 650091121}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

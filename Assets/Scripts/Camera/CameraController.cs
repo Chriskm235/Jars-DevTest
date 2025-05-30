@@ -30,8 +30,8 @@ namespace Jars.DevTest
         void ApplyPosition()
         {
             goalRot = Quaternion.identity;
-            var xRotation = Quaternion.AngleAxis(viewerState.inputRot.x, Vector3.up);
-            var yRotation = Quaternion.AngleAxis(viewerState.inputRot.y, xRotation * Vector3.right);
+            var xRotation = Quaternion.AngleAxis(viewerState.inputRot.Value.x, Vector3.up);
+            var yRotation = Quaternion.AngleAxis(viewerState.inputRot.Value.y, xRotation * Vector3.right);
             goalRot *= yRotation;
             goalRot *= xRotation;
 

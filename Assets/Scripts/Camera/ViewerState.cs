@@ -1,9 +1,12 @@
 using UnityEngine;
+using R3;
 
 namespace Jars.DevTest
 {
     public class ViewerState : MonoBehaviour
     {
-        public Vector2 inputRot;
+        public ReactiveProperty<Vector2> inputRot = new ReactiveProperty<Vector2>();
+        public ReactiveProperty<string> category = new ReactiveProperty<string>();
+        public ReactiveProperty<AnimationClip> clip = new ReactiveProperty<AnimationClip>();
     }
 }

@@ -1,30 +1,28 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using Animancer;
 using UnityEngine;
+using R3;
+using System.Linq;
 
 namespace Jars.DevTest
 {
-    public class AnimationBootstrap : MonoBehaviour
+    public class ViewerAnimator : MonoBehaviour
     {
         [SerializeField] AnimancerComponent anim;
-        [SerializeField] AnimationClip[] clips;
         [SerializeField] AnimationClip idleClip;
+        [SerializeField] ViewerState state;
 
         Vector3 animBasePos;
         bool isTweening;
 
-        private void Awake()
-        {
-            animBasePos = anim.transform.position;
-        }
+        private void Awake() => animBasePos = anim.transform.position;
 
-        private void OnGUI()
+        private void Start()
         {
-            foreach (var c in clips)
-                if (GUILayout.Button(c.name))
-                    StartCoroutine(TweenToAnimation(c));
+            state.clip
+                .Select(c => c ?? idleClip)
+                .Subscribe(c => StartCoroutine(TweenToAnimation(c)))
+                .AddTo(this);
         }
 
         IEnumerator TweenToAnimation(AnimationClip clip)

@@ -186,7 +186,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ed0d2a3c06c004737938a11162027780, type: 3}
       propertyPath: m_Name
-      value: Ch20_nonPBR
+      value: Racer
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: ed0d2a3c06c004737938a11162027780, type: 3}
       propertyPath: m_Layer
@@ -331,6 +331,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ed0d2a3c06c004737938a11162027780, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2461785920660347624}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: ed0d2a3c06c004737938a11162027780, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9092625311397426326}
   m_SourcePrefab: {fileID: 100100000, guid: ed0d2a3c06c004737938a11162027780, type: 3}
 --- !u!1 &1197627812141523106 stripped
 GameObject:
@@ -352,6 +355,21 @@ MonoBehaviour:
   _Animator: {fileID: 5563397300021059682}
   _Transitions: {fileID: 0}
   _ActionOnDisable: 0
+--- !u!114 &9092625311397426326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197627812141523106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7a038100c35047428dab063b1f6a605, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 2461785920660347624}
+  idleClip: {fileID: 7400000, guid: 4bd38a047d5e64ad8846411ff453afa8, type: 2}
+  state: {fileID: 0}
 --- !u!95 &5563397300021059682 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: ed0d2a3c06c004737938a11162027780, type: 3}
