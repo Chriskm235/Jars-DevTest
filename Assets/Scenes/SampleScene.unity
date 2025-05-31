@@ -2741,7 +2741,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   viewerState: {fileID: 650091121}
-  rotationSpeed: {x: 45, y: 15}
+  rotationSpeed: {x: 18000, y: 9000}
   startRot: {x: 180, y: 30}
 --- !u!1 &1805129168 stripped
 GameObject:

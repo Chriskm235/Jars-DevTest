@@ -59,9 +59,17 @@ namespace Jars.DevTest
                     yield return null;
             }
 
-            anim.transform.position = animBasePos;
+            var startTime = Time.time;
+            var startPos = anim.transform.position;
+
             anim.Play(data.clip, fadeTime);
 
+            while (Time.time < startTime + fadeTime)
+            {
+                anim.transform.position = Vector3.Lerp(startPos, animBasePos, (Time.time - startTime) / fadeTime);
+                yield return null;
+            }
+            anim.transform.position = animBasePos;
 
             isTweening = false;
         }
