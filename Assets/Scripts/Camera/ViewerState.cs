@@ -1,5 +1,6 @@
 using UnityEngine;
 using R3;
+using Animancer;
 
 namespace Jars.DevTest
 {
@@ -9,5 +10,6 @@ namespace Jars.DevTest
         public ReactiveProperty<string> category = new ReactiveProperty<string>();
         public ReactiveProperty<AnimationData> clipData = new ReactiveProperty<AnimationData>();
         public ReactiveProperty<bool> isTweening = new ReactiveProperty<bool>();
+        public ReactiveProperty<AnimancerState> animState = new ReactiveProperty<AnimancerState>(null);
     }
 }

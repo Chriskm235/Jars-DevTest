@@ -10,6 +10,7 @@ namespace Jars.DevTest
         [SerializeField] Vector2 startRot;
 
         bool mouseOver;
+        bool startedMouseOver;
 
         public void OnPointerEnter(PointerEventData eventData) => mouseOver = true;
         public void OnPointerExit(PointerEventData eventData) => mouseOver = false;
@@ -21,7 +22,10 @@ namespace Jars.DevTest
 
         void Update()
         {
-            if (mouseOver && Input.GetKey(KeyCode.Mouse0))
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+                startedMouseOver = mouseOver;
+
+            if (startedMouseOver && Input.GetKey(KeyCode.Mouse0))
             {
                 var delta = new Vector3(Input.GetAxis("Mouse X")/Screen.width, Input.GetAxis("Mouse Y")/Screen.height);
                 var inputRot = viewerState.inputRot.Value;

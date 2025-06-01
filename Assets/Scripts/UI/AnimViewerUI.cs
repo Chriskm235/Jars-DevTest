@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using R3;
+using UnityEngine.UI;
 
 namespace Jars.DevTest
 {
@@ -13,6 +14,7 @@ namespace Jars.DevTest
         [SerializeField] Transform animElementParent;
         [SerializeField] GameObject animElementPrefab;
         [SerializeField] ViewerState state;
+        [SerializeField] Scrollbar scrubber;
 
         [SerializeField] List<GameObject> tabElements = new List<GameObject>();
         [SerializeField] List<GameObject> animElements = new List<GameObject>();
@@ -81,6 +83,23 @@ namespace Jars.DevTest
             state.category
                 .Subscribe(_ => PopulateAnims())
                 .AddTo(this);
+
+            state.isTweening
+                .CombineLatest(state.animState,(t,s) => !t && s!= null)
+                .Subscribe(scrubber.gameObject.SetActive)
+                .AddTo(this);
+
+            scrubber.onValueChanged.AddListener(v =>
+            {
+                if(state.animState.Value != null)
+                    state.animState.Value.NormalizedTime = v;
+            });
+
+        }
+
+        private void Update()
+        {
+            scrubber.SetValueWithoutNotify((state.animState.Value?.NormalizedTime ?? 0) % 1);
         }
     }
 }

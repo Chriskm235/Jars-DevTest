@@ -14,8 +14,6 @@ namespace Jars.DevTest
         [SerializeField] ViewerState state;
         [SerializeField] float fadeTime = .25f;
 
-        AnimancerState animState = null;
-
         private void Start()
         {
             state.clipData
@@ -43,7 +41,7 @@ namespace Jars.DevTest
         {
             if (prev.reverseExit)
             {
-                animState = anim.Play(prev.clip, fadeTime);
+                var animState = anim.Play(prev.clip, fadeTime);
                 animState.NormalizedTime = animState.NormalizedTime > 1 ? 1 : animState.NormalizedTime;
                 animState.Speed = -3;
                 while (animState.NormalizedTime > 0)
@@ -52,7 +50,7 @@ namespace Jars.DevTest
             }
             if (prev.exitClip != null)
             {
-                animState = anim.Play(prev.exitClip, fadeTime);
+                var animState = anim.Play(prev.exitClip, fadeTime);
                 while (animState.NormalizedTime < 1)
                     yield return null;
             }
@@ -62,13 +60,14 @@ namespace Jars.DevTest
         {
             if (data.enterClip != null)
             {
-                animState = anim.Play(data.enterClip, fadeTime);
+               var animState = anim.Play(data.enterClip, fadeTime);
 
                 while (animState.NormalizedTime < 1)
                     yield return null;
             }
             {
-                animState = anim.Play(data.clip, fadeTime);
+                var animState = anim.Play(data.clip, fadeTime);
+                state.animState.Value = animState;
                 yield return new WaitForSeconds(fadeTime);
             }
         }
