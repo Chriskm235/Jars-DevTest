@@ -3,6 +3,7 @@ using Animancer;
 using UnityEngine;
 using R3;
 using System.Linq;
+using System;
 
 namespace Jars.DevTest
 {
@@ -11,11 +12,9 @@ namespace Jars.DevTest
         [SerializeField] AnimancerComponent anim;
         [SerializeField] AnimationClip idleClip;
         [SerializeField] ViewerState state;
+        [SerializeField] float fadeTime = .25f;
 
-        Vector3 animBasePos;
-        bool isTweening;
-
-        private void Awake() => animBasePos = anim.transform.position;
+        AnimancerState animState = null;
 
         private void Start()
         {
@@ -31,47 +30,47 @@ namespace Jars.DevTest
 
         IEnumerator TweenToAnimation(AnimationData data, AnimationData prev)
         {
-            while (isTweening)
-                yield return null;
-            isTweening = true;
+            if (state.isTweening.Value) yield break;
+            state.isTweening.Value = true;
 
-            float fadeTime = .25f;
+            yield return TweenOut(prev);
+            yield return TweenIn(data);
+
+            state.isTweening.Value = false;
+        }
+
+        IEnumerator TweenOut(AnimationData prev)
+        {
+            if (prev.reverseExit)
+            {
+                animState = anim.Play(prev.clip, fadeTime);
+                animState.NormalizedTime = animState.NormalizedTime > 1 ? 1 : animState.NormalizedTime;
+                animState.Speed = -3;
+                while (animState.NormalizedTime > 0)
+                    yield return null;
+                animState.Speed = 1;
+            }
             if (prev.exitClip != null)
             {
-                var state = anim.Play(prev.exitClip);
-                var done = false;
-                state.Events(this).OnEnd ??= () => done = true;
-                while (!done)
+                animState = anim.Play(prev.exitClip, fadeTime);
+                while (animState.NormalizedTime < 1)
                     yield return null;
             }
-            else
-            {
-                anim.Play(idleClip, fadeTime);
-                yield return new WaitForSeconds(fadeTime);
-            }
+        }
 
+        IEnumerator TweenIn(AnimationData data)
+        {
             if (data.enterClip != null)
             {
-                var state = anim.Play(data.enterClip);
-                var done = false;
-                state.Events(this).OnEnd ??= () => done = true;
-                while (!done)
+                animState = anim.Play(data.enterClip, fadeTime);
+
+                while (animState.NormalizedTime < 1)
                     yield return null;
             }
-
-            var startTime = Time.time;
-            var startPos = anim.transform.position;
-
-            anim.Play(data.clip, fadeTime);
-
-            while (Time.time < startTime + fadeTime)
             {
-                anim.transform.position = Vector3.Lerp(startPos, animBasePos, (Time.time - startTime) / fadeTime);
-                yield return null;
+                animState = anim.Play(data.clip, fadeTime);
+                yield return new WaitForSeconds(fadeTime);
             }
-            anim.transform.position = animBasePos;
-
-            isTweening = false;
         }
     }
 }

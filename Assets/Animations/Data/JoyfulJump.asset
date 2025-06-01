@@ -13,4 +13,15 @@ MonoBehaviour:
   m_Name: JoyfulJump
   m_EditorClassIdentifier: 
   clip: {fileID: 7400000, guid: ef72aa5a7b23a4248986b2b5afaec852, type: 2}
+  enterClip:
+    rid: -2
+  exitClip:
+    rid: -2
   category: Jump
+  waitExitTime: 1
+  reverseExit: 0
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

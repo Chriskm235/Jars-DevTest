@@ -13,4 +13,13 @@ MonoBehaviour:
   m_Name: Idle
   m_EditorClassIdentifier: 
   clip: {fileID: 7400000, guid: 4bd38a047d5e64ad8846411ff453afa8, type: 2}
+  enterClip:
+    rid: -2
+  exitClip:
+    rid: -2
   category: Idle
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

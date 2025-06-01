@@ -13,4 +13,15 @@ MonoBehaviour:
   m_Name: Dying
   m_EditorClassIdentifier: 
   clip: {fileID: 7400000, guid: 2977eaaee0d014aac9aabbb6045fa66b, type: 2}
+  enterClip:
+    rid: -2
+  exitClip:
+    rid: -2
   category: Death
+  waitExitTime: 0
+  reverseExit: 1
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }

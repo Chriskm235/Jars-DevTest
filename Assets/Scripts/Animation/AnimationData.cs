@@ -1,3 +1,4 @@
+using Animancer;
 using UnityEngine;
 
 namespace Jars.DevTest
@@ -6,8 +7,11 @@ namespace Jars.DevTest
     public class AnimationData : ScriptableObject
     {
         public AnimationClip clip;
-        public AnimationClip enterClip;
-        public AnimationClip exitClip;
+        [SerializeReference]
+        public ClipTransition enterClip;
+        [SerializeReference]
+        public ClipTransition exitClip;
         public string category;
+        public bool reverseExit;
     }
 }
