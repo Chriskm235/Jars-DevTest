@@ -23,6 +23,7 @@ namespace Jars.DevTest
         [SerializeField] Image playButtonImage;
         [SerializeField] Sprite playSprite;
         [SerializeField] Sprite pauseSprite;
+        [SerializeField] TextMeshProUGUI animNameText;
         [SerializeField] int[] scrubberSpeeds;
 
         [SerializeField] List<CategoryElementUI> tabElements = new List<CategoryElementUI>();
@@ -120,6 +121,10 @@ namespace Jars.DevTest
                 speedText.text = AnimState.Speed + "x";
                 playButtonImage.sprite = AnimState.IsPlaying ? pauseSprite : playSprite;
             }
+
+            animNameText.text = state.isTweening.Value ? "Loading..." : 
+                AnimState == null ? string.Empty :
+                AnimState.Clip.name;
         }
 
         public void PlayPause()
