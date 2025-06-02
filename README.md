@@ -36,3 +36,5 @@ TODO:
 - Implement backend loaded animations utilizing a Baas
 - Offer a variety of models to animate
 - More animations
+- I wanted to present this in WebGL but that seems to be broken on Unity 6
+https://discussions.unity.com/t/webgl-builds-no-longer-function-after-upgrading-to-unity-6000-0-32f/1576293
