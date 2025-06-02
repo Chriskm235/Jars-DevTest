@@ -3,6 +3,9 @@ using System.Linq;
 using UnityEngine;
 using R3;
 using UnityEngine.UI;
+using TMPro;
+using System;
+using Animancer;
 
 namespace Jars.DevTest
 {
@@ -14,10 +17,18 @@ namespace Jars.DevTest
         [SerializeField] Transform animElementParent;
         [SerializeField] GameObject animElementPrefab;
         [SerializeField] ViewerState state;
+        [SerializeField] GameObject scrubberRoot;
         [SerializeField] Scrollbar scrubber;
+        [SerializeField] TextMeshProUGUI speedText;
+        [SerializeField] Image playButtonImage;
+        [SerializeField] Sprite playSprite;
+        [SerializeField] Sprite pauseSprite;
+        [SerializeField] int[] scrubberSpeeds;
 
         [SerializeField] List<CategoryElementUI> tabElements = new List<CategoryElementUI>();
         [SerializeField] List<GameObject> animElements = new List<GameObject>();
+
+        AnimancerState AnimState => state.animState.Value;
 
         void Populate()
         {
@@ -79,13 +90,16 @@ namespace Jars.DevTest
 
             state.isTweening
                 .CombineLatest(state.animState,(t,s) => !t && s!= null)
-                .Subscribe(scrubber.gameObject.SetActive)
+                .Subscribe(scrubberRoot.gameObject.SetActive)
                 .AddTo(this);
-
+            
             scrubber.onValueChanged.AddListener(v =>
             {
-                if(state.animState.Value != null)
-                    state.animState.Value.NormalizedTime = v;
+                if (AnimState != null)
+                {
+                    AnimState.NormalizedTime = v;
+                    AnimState.IsPlaying = false;
+                }
             });
 
             state.category
@@ -95,12 +109,52 @@ namespace Jars.DevTest
                         e.Highlighted = e.Category == c;
                 })
                 .AddTo(this);
-
         }
 
         private void Update()
         {
-            scrubber.SetValueWithoutNotify((state.animState.Value?.NormalizedTime ?? 0) % 1);
+            scrubber.SetValueWithoutNotify((AnimState?.NormalizedTime ?? 0) % 1);
+
+            if (AnimState != null)
+            {
+                speedText.text = AnimState.Speed + "x";
+                playButtonImage.sprite = AnimState.IsPlaying ? playSprite : pauseSprite;
+            }
+        }
+
+        public void PlayPause()
+        {
+            if (AnimState != null) AnimState.IsPlaying = !AnimState.IsPlaying;
+        }
+
+        public void IncreaseSpeed() => IterateSpeed(1);
+
+        public void DecreaseSpeed() => IterateSpeed(-1);
+
+        void IterateSpeed(int iteration)
+        {
+            var index = Mathf.Clamp(CurrentSpeedIndex + iteration, 0, scrubberSpeeds.Length - 1);
+            if (AnimState != null) AnimState.Speed = scrubberSpeeds[index];
+        }
+
+        int CurrentSpeedIndex
+        {
+            get
+            {
+                if(AnimState == null) return 0;
+
+                var currentIndex = 0;
+                for (int a = 0; a < scrubberSpeeds.Length; a++)
+                {
+                    if (scrubberSpeeds[a] > AnimState.Speed)
+                    {
+                        currentIndex = a - 1;
+                        break;
+                    }
+                }
+                
+                return Mathf.Clamp(currentIndex,0, scrubberSpeeds.Length - 1);
+            }
         }
     }
 }
