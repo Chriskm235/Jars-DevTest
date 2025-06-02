@@ -10,7 +10,7 @@ namespace Jars.DevTest
     public class ViewerAnimator : MonoBehaviour
     {
         [SerializeField] AnimancerComponent anim;
-        [SerializeField] AnimationClip idleClip;
+        [SerializeField] AnimationData idleClip;
         [SerializeField] ViewerState state;
         [SerializeField] float fadeTime = .25f;
 
@@ -18,14 +18,12 @@ namespace Jars.DevTest
         {
             // Subscribe to the clip state in pairs so you always know what your exit animation was
             state.clipData
-                .Select(c => c ?? new AnimationData
-                {
-                    // Apply a default idle clip
-                    clip = idleClip
-                })
+                .Select(c => c ?? idleClip)
                 .Pairwise()
                 .Subscribe(p => StartCoroutine(TweenToAnimation(p.Current, p.Previous)))
                 .AddTo(this);
+
+            StartCoroutine(TweenToAnimation(idleClip, null));
         }
 
         IEnumerator TweenToAnimation(AnimationData data, AnimationData prev)
@@ -45,6 +43,9 @@ namespace Jars.DevTest
 
         IEnumerator TweenOut(AnimationData prev)
         {
+            if (prev == null)
+                yield break;
+
             if (prev.reverseExit)
             {
                 // Play a reverse of the animation

@@ -4948,6 +4948,10 @@ PrefabInstance:
       propertyPath: state
       value: 
       objectReference: {fileID: 650091121}
+    - target: {fileID: 9092625311397426326, guid: e2a436cffd4ce43f8b13a85aad5049b3, type: 3}
+      propertyPath: idleClip
+      value: 
+      objectReference: {fileID: 11400000, guid: 3a39bea33e59d470d87ea6d81a7c42c9, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
