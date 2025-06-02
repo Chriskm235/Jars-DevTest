@@ -17,6 +17,7 @@ namespace Jars.DevTest
         [SerializeField] Transform animElementParent;
         [SerializeField] GameObject animElementPrefab;
         [SerializeField] ViewerState state;
+        [SerializeField] TMP_InputField searchField; 
         [SerializeField] GameObject scrubberRoot;
         [SerializeField] Scrollbar scrubber;
         [SerializeField] TextMeshProUGUI speedText;
@@ -52,7 +53,10 @@ namespace Jars.DevTest
 
                 var category = c;
                 element.Init(category);
-                element.OnClicked.AddListener(() => state.category.Value = category);
+                element.OnClicked.AddListener(() => {
+                    state.category.Value = category;
+                    state.search.Value = string.Empty;
+                });
             }
 
             PopulateAnims();
@@ -64,8 +68,11 @@ namespace Jars.DevTest
                 Destroy(e.gameObject);
             animElements.Clear();
 
-            var filtered = library.anims
-                .Where(a => a.category == state.category.Value);
+            var filtered = !string.IsNullOrEmpty(state.search.Value) ? 
+                library.anims
+                    .Where(a => a.clip.name.ToLower().Contains(state.search.Value.ToLower()))
+                :library.anims
+                    .Where(a => a.category == state.category.Value);
             foreach (var a in filtered)
             {
                 var newGo = Instantiate(animElementPrefab, animElementParent);
@@ -76,11 +83,12 @@ namespace Jars.DevTest
                 element.Init(a);
                 element.OnClicked.AddListener(() =>
                 {
-                    if (!state.isTweening.Value) state.clipData.Value = anim;
+                    if (!state.isTweening.Value) 
+                        state.clipData.Value = anim;
                 });
             }
 
-            RefreshHighlighted();
+            RefreshAnimHighlighted();
         }
 
         private void Start()
@@ -106,16 +114,22 @@ namespace Jars.DevTest
             });
 
             state.category
-                .Subscribe(c =>
-                {
-                    foreach (var e in tabElements)
-                        e.Highlighted = e.Category == c;
-                })
+                .Subscribe(_ => RefreshTabsHighlighted())
                 .AddTo(this);
 
             state.clipData
-                .Subscribe(_ => RefreshHighlighted())
+                .Subscribe(_ => RefreshAnimHighlighted())
                 .AddTo(this);
+
+            searchField
+                .onValueChanged.AddListener(t => state.search.Value = t);
+
+            state.search
+                .Subscribe(s => { 
+                    searchField.SetTextWithoutNotify(s);
+                    PopulateAnims();
+                    RefreshTabsHighlighted();
+                });
         }
 
         private void Update()
@@ -174,12 +188,18 @@ namespace Jars.DevTest
             }
         }
 
-        void RefreshHighlighted()
+        void RefreshAnimHighlighted()
         {
             foreach (var e in animElements)
             {
                 e.Highlighted = e.Data.clip.GetInstanceID() == state.clipData.Value?.clip?.GetInstanceID();
             }
+        }
+
+        void RefreshTabsHighlighted()
+        {
+            foreach (var e in tabElements)
+                e.Highlighted = e.Category == state.category.Value && string.IsNullOrEmpty(state.search.Value);
         }
     }
 }

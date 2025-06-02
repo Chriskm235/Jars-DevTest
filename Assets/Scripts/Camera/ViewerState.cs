@@ -11,5 +11,6 @@ namespace Jars.DevTest
         public ReactiveProperty<AnimationData> clipData = new ReactiveProperty<AnimationData>();
         public ReactiveProperty<bool> isTweening = new ReactiveProperty<bool>();
         public ReactiveProperty<AnimancerState> animState = new ReactiveProperty<AnimancerState>(null);
+        public ReactiveProperty<string> search = new ReactiveProperty<string>();
     }
 }
