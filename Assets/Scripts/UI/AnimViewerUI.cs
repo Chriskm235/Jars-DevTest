@@ -118,13 +118,21 @@ namespace Jars.DevTest
             if (AnimState != null)
             {
                 speedText.text = AnimState.Speed + "x";
-                playButtonImage.sprite = AnimState.IsPlaying ? playSprite : pauseSprite;
+                playButtonImage.sprite = AnimState.IsPlaying ? pauseSprite : playSprite;
             }
         }
 
         public void PlayPause()
         {
             if (AnimState != null) AnimState.IsPlaying = !AnimState.IsPlaying;
+        }
+
+        public void Restart()
+        {
+            if(AnimState != null)
+            {
+                AnimState.NormalizedTime = AnimState.Speed > 0 ? 0 : 1;
+            }
         }
 
         public void IncreaseSpeed() => IterateSpeed(1);
