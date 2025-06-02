@@ -147,13 +147,11 @@ namespace Jars.DevTest
                 for (int a = 0; a < scrubberSpeeds.Length; a++)
                 {
                     if (scrubberSpeeds[a] > AnimState.Speed)
-                    {
-                        currentIndex = a - 1;
                         break;
-                    }
+                    currentIndex = a;
                 }
                 
-                return Mathf.Clamp(currentIndex,0, scrubberSpeeds.Length - 1);
+                return currentIndex;
             }
         }
     }
