@@ -16,13 +16,13 @@ namespace Jars.DevTest
         [SerializeField] ViewerState state;
         [SerializeField] Scrollbar scrubber;
 
-        [SerializeField] List<GameObject> tabElements = new List<GameObject>();
+        [SerializeField] List<CategoryElementUI> tabElements = new List<CategoryElementUI>();
         [SerializeField] List<GameObject> animElements = new List<GameObject>();
 
         void Populate()
         {
             foreach (var e in tabElements)
-                Destroy(e);
+                Destroy(e.gameObject);
             tabElements.Clear();
 
             // Meow
@@ -32,22 +32,15 @@ namespace Jars.DevTest
 
             state.category.Value = cats.FirstOrDefault();
 
-            var isFirst = true;
             foreach (var c in cats)
             {
                 var newGo = Instantiate(tabElementPrefab, tabElementParent);
-                tabElements.Add(newGo);
+                var element = newGo.GetComponent<CategoryElementUI>();
+                tabElements.Add(element);
 
                 var category = c;
-                var element = newGo.GetComponent<CategoryElementUI>();
                 element.Init(category);
-                element.OnClicked.AddListener(() =>
-                {
-                    state.category.Value = category;
-                    element.Highlight();
-                });
-                if (isFirst) element.Highlight();
-                isFirst = false;
+                element.OnClicked.AddListener(() => state.category.Value = category);
             }
 
             PopulateAnims();
@@ -94,6 +87,14 @@ namespace Jars.DevTest
                 if(state.animState.Value != null)
                     state.animState.Value.NormalizedTime = v;
             });
+
+            state.category
+                .Subscribe(c =>
+                {
+                    foreach(var e in tabElements)
+                        e.Highlighted = e.Category == c;
+                })
+                .AddTo(this);
 
         }
 

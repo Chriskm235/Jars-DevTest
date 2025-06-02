@@ -9,13 +9,20 @@ namespace Jars.DevTest
     {
         [SerializeField] TextMeshProUGUI text;
         [SerializeField] Button button;
+        [SerializeField] GameObject selectedOverlay;
 
         public UnityEvent OnClicked;
 
-        public void Init(string category) => text.text = category;
+        public string Category { get; private set; }
+
+        public void Init(string category)
+        {
+            Category = category;
+            text.text = category;
+        }
 
         public void TriggerClick() => OnClicked.Invoke();
 
-        public void Highlight() => button.Select();
+        public bool Highlighted { set => selectedOverlay.SetActive(value); }
     }
 }
