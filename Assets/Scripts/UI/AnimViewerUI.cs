@@ -27,7 +27,7 @@ namespace Jars.DevTest
         [SerializeField] int[] scrubberSpeeds;
 
         [SerializeField] List<CategoryElementUI> tabElements = new List<CategoryElementUI>();
-        [SerializeField] List<GameObject> animElements = new List<GameObject>();
+        [SerializeField] List<AnimElementUI> animElements = new List<AnimElementUI>();
 
         AnimancerState AnimState => state.animState.Value;
 
@@ -61,7 +61,7 @@ namespace Jars.DevTest
         void PopulateAnims()
         {
             foreach (var e in animElements)
-                Destroy(e);
+                Destroy(e.gameObject);
             animElements.Clear();
 
             var filtered = library.anims
@@ -69,9 +69,9 @@ namespace Jars.DevTest
             foreach (var a in filtered)
             {
                 var newGo = Instantiate(animElementPrefab, animElementParent);
-                animElements.Add(newGo);
-
                 var element = newGo.GetComponent<AnimElementUI>();
+
+                animElements.Add(element);
                 var anim = a;
                 element.Init(a);
                 element.OnClicked.AddListener(() =>
@@ -79,6 +79,8 @@ namespace Jars.DevTest
                     if (!state.isTweening.Value) state.clipData.Value = anim;
                 });
             }
+
+            RefreshHighlighted();
         }
 
         private void Start()
@@ -90,10 +92,10 @@ namespace Jars.DevTest
                 .AddTo(this);
 
             state.isTweening
-                .CombineLatest(state.animState,(t,s) => !t && s!= null)
+                .CombineLatest(state.animState, (t, s) => !t && s != null)
                 .Subscribe(scrubberRoot.gameObject.SetActive)
                 .AddTo(this);
-            
+
             scrubber.onValueChanged.AddListener(v =>
             {
                 if (AnimState != null)
@@ -106,9 +108,13 @@ namespace Jars.DevTest
             state.category
                 .Subscribe(c =>
                 {
-                    foreach(var e in tabElements)
+                    foreach (var e in tabElements)
                         e.Highlighted = e.Category == c;
                 })
+                .AddTo(this);
+
+            state.clipData
+                .Subscribe(_ => RefreshHighlighted())
                 .AddTo(this);
         }
 
@@ -122,7 +128,7 @@ namespace Jars.DevTest
                 playButtonImage.sprite = AnimState.IsPlaying ? pauseSprite : playSprite;
             }
 
-            animNameText.text = state.isTweening.Value ? "Loading..." : 
+            animNameText.text = state.isTweening.Value ? "Loading..." :
                 AnimState == null ? string.Empty :
                 AnimState.Clip.name;
         }
@@ -134,7 +140,7 @@ namespace Jars.DevTest
 
         public void Restart()
         {
-            if(AnimState != null)
+            if (AnimState != null)
             {
                 AnimState.NormalizedTime = AnimState.Speed > 0 ? 0 : 1;
             }
@@ -154,7 +160,7 @@ namespace Jars.DevTest
         {
             get
             {
-                if(AnimState == null) return 0;
+                if (AnimState == null) return 0;
 
                 var currentIndex = 0;
                 for (int a = 0; a < scrubberSpeeds.Length; a++)
@@ -163,8 +169,16 @@ namespace Jars.DevTest
                         break;
                     currentIndex = a;
                 }
-                
+
                 return currentIndex;
+            }
+        }
+
+        void RefreshHighlighted()
+        {
+            foreach (var e in animElements)
+            {
+                e.Highlighted = e.Data.clip.GetInstanceID() == state.clipData.Value?.clip?.GetInstanceID();
             }
         }
     }
