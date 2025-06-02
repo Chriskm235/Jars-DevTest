@@ -17,7 +17,7 @@ namespace Jars.DevTest
         [SerializeField] Transform animElementParent;
         [SerializeField] GameObject animElementPrefab;
         [SerializeField] ViewerState state;
-        [SerializeField] TMP_InputField searchField; 
+        [SerializeField] TMP_InputField searchField;
         [SerializeField] GameObject scrubberRoot;
         [SerializeField] Scrollbar scrubber;
         [SerializeField] TextMeshProUGUI speedText;
@@ -27,6 +27,7 @@ namespace Jars.DevTest
         [SerializeField] TextMeshProUGUI animNameText;
         [SerializeField] int[] scrubberSpeeds;
 
+        // HACK: I keep these public so I can load them with default elements for sizing and such
         [SerializeField] List<CategoryElementUI> tabElements = new List<CategoryElementUI>();
         [SerializeField] List<AnimElementUI> animElements = new List<AnimElementUI>();
 
@@ -34,6 +35,13 @@ namespace Jars.DevTest
 
         void Populate()
         {
+            PopulateTabs();
+            PopulateAnims();
+        }
+
+        void PopulateTabs()
+        {
+            // Clear all tab views
             foreach (var e in tabElements)
                 Destroy(e.gameObject);
             tabElements.Clear();
@@ -43,47 +51,56 @@ namespace Jars.DevTest
                 .Select(a => a.category)
                 .Distinct();
 
+            // Set the category to the first be default
             state.category.Value = cats.FirstOrDefault();
 
+            // Many meows
             foreach (var c in cats)
             {
+                // Create and init all the new views and add them to the list
                 var newGo = Instantiate(tabElementPrefab, tabElementParent);
                 var element = newGo.GetComponent<CategoryElementUI>();
                 tabElements.Add(element);
 
                 var category = c;
                 element.Init(category);
-                element.OnClicked.AddListener(() => {
+                element.OnClicked.AddListener(() =>
+                {
+                    // Set the category and clear the search bar
                     state.category.Value = category;
                     state.search.Value = string.Empty;
                 });
             }
-
-            PopulateAnims();
         }
 
         void PopulateAnims()
         {
+            // Clear all the anim views
             foreach (var e in animElements)
                 Destroy(e.gameObject);
             animElements.Clear();
 
-            var filtered = !string.IsNullOrEmpty(state.search.Value) ? 
+            // Filter by search if there is one, otherwise filter by category
+            var filtered = !string.IsNullOrEmpty(state.search.Value) ?
                 library.anims
                     .Where(a => a.clip.name.ToLower().Contains(state.search.Value.ToLower()))
-                :library.anims
+                : library.anims
                     .Where(a => a.category == state.category.Value);
+
+            // Create all the view elements
             foreach (var a in filtered)
             {
+                // Instantiate the anim view element and add it to the list
                 var newGo = Instantiate(animElementPrefab, animElementParent);
                 var element = newGo.GetComponent<AnimElementUI>();
-
                 animElements.Add(element);
+
                 var anim = a;
                 element.Init(a);
                 element.OnClicked.AddListener(() =>
                 {
-                    if (!state.isTweening.Value) 
+                    // If you send the message when its tweening, its ignored
+                    if (!state.isTweening.Value)
                         state.clipData.Value = anim;
                 });
             }
@@ -95,15 +112,18 @@ namespace Jars.DevTest
         {
             Populate();
 
+            // Repopulate the anim views whenever the category changes
             state.category
                 .Subscribe(_ => PopulateAnims())
                 .AddTo(this);
 
+            // Show the scrubber if its not tweening and there is an animation state to scrub with
             state.isTweening
                 .CombineLatest(state.animState, (t, s) => !t && s != null)
                 .Subscribe(scrubberRoot.gameObject.SetActive)
                 .AddTo(this);
 
+            // When the scrubber is moves, pause the animation and set the time to v
             scrubber.onValueChanged.AddListener(v =>
             {
                 if (AnimState != null)
@@ -113,63 +133,82 @@ namespace Jars.DevTest
                 }
             });
 
+            // Refresh highlighted elements
             state.category
                 .Subscribe(_ => RefreshTabsHighlighted())
                 .AddTo(this);
-
             state.clipData
                 .Subscribe(_ => RefreshAnimHighlighted())
                 .AddTo(this);
 
+            // When search field is entered, set the search state directly
             searchField
                 .onValueChanged.AddListener(t => state.search.Value = t);
 
             state.search
-                .Subscribe(s => { 
+                .Subscribe(s =>
+                {
+                    // Make sure these stay synced 
                     searchField.SetTextWithoutNotify(s);
+                    // Refresh the anim views
                     PopulateAnims();
+                    // Refresh the tab highlights, turning them all off
                     RefreshTabsHighlighted();
                 });
         }
 
         private void Update()
         {
+            // This will keep the bar in sync with the anim state
             scrubber.SetValueWithoutNotify((AnimState?.NormalizedTime ?? 0) % 1);
+
 
             if (AnimState != null)
             {
+                // Keep the speed text and play buttons in sync every update
                 speedText.text = AnimState.Speed + "x";
                 playButtonImage.sprite = AnimState.IsPlaying ? pauseSprite : playSprite;
             }
 
-            animNameText.text = state.isTweening.Value ? "Loading..." :
+            // Say "Tweening" if anything is tweening,
+            // Say nothing if there is no animation
+            // Say clip name if theres a clip
+            animNameText.text = state.isTweening.Value ? "Tweening..." :
                 AnimState == null ? string.Empty :
                 AnimState.Clip.name;
         }
 
+        // For external button use
         public void PlayPause()
         {
             if (AnimState != null) AnimState.IsPlaying = !AnimState.IsPlaying;
         }
 
+        // For external button use
         public void Restart()
         {
             if (AnimState != null)
             {
+                // if youre going backwards, set the clip at the end
                 AnimState.NormalizedTime = AnimState.Speed > 0 ? 0 : 1;
             }
         }
 
+        // For external button use
         public void IncreaseSpeed() => IterateSpeed(1);
 
+        // For external button use
         public void DecreaseSpeed() => IterateSpeed(-1);
 
+        // Turns the speed up or down relative to the scrubber speed options
         void IterateSpeed(int iteration)
         {
             var index = Mathf.Clamp(CurrentSpeedIndex + iteration, 0, scrubberSpeeds.Length - 1);
             if (AnimState != null) AnimState.Speed = scrubberSpeeds[index];
         }
 
+        // A crude way of working backwards to determine the current speed relative
+        // to all the scrubber speed options
         int CurrentSpeedIndex
         {
             get
@@ -192,12 +231,15 @@ namespace Jars.DevTest
         {
             foreach (var e in animElements)
             {
+                // HACK: for some reason the clip names were different where one
+                // clip name had its white spaces removed. I dunno...
                 e.Highlighted = e.Data.clip.GetInstanceID() == state.clipData.Value?.clip?.GetInstanceID();
             }
         }
 
         void RefreshTabsHighlighted()
         {
+            // Highlight the current category, turn off if there is a search active
             foreach (var e in tabElements)
                 e.Highlighted = e.Category == state.category.Value && string.IsNullOrEmpty(state.search.Value);
         }

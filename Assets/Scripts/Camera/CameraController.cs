@@ -36,11 +36,14 @@ namespace Jars.DevTest
         void ApplyPosition(bool tween = true)
         {
             var goalRot = Quaternion.identity;
+
+            // Calculate and apply the two axies of rotation
             var xRotation = Quaternion.AngleAxis(viewerState.inputRot.Value.x, Vector3.up);
             var yRotation = Quaternion.AngleAxis(viewerState.inputRot.Value.y, xRotation * Vector3.right);
             goalRot *= yRotation;
             goalRot *= xRotation;
 
+            // If youre tweening, tween to goal, otherwise go to goal
             currentRot = tween ? Quaternion.Slerp(currentRot, goalRot, 5f * Time.deltaTime) : goalRot;
 
             // Set the pos to be offset from the bounds based on rotation and range
@@ -51,7 +54,7 @@ namespace Jars.DevTest
 
         void ApplyRotation(bool tween = true)
         {
-            var targetDir = currentRot * Vector3.forward;// (target.position - transform.position).normalized;
+            var targetDir = currentRot * Vector3.forward;
 
             // Find the center and aim array so we know how much to offset the rotation
             var aimRay = camera.ViewportPointToRay(new Vector2(.75f, .5f));
@@ -60,6 +63,7 @@ namespace Jars.DevTest
             // Find how much to offset from the target's direction
             var goalRot = Quaternion.FromToRotation(aimRay.direction, centerRay.direction);
 
+            // If youre tweening, tween to goal, otherwise go to goal
             currentRotOffset = tween ? Quaternion.Lerp(currentRotOffset, goalRot, 5f * Time.deltaTime) : goalRot;
 
             // Set the dir to target dir rotated by the offset
