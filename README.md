@@ -1,7 +1,5 @@
 This is a animation previewer tool built to the specs here: https://tinyurl.com/35fbwypc
 
-The tool can be used here: 
-
 Quick start:
 - Open `SampleScene`
 - Click `Play`
@@ -16,7 +14,6 @@ Features include:
 - Animation scrubber for fine movement within the animation
 - Data-driven architecture designed for scaling
 - UI is built to handle a range of aspect ratios
-- WebGL support
 
 Tech stack:
 - Animancer is used for handling all animations programmatically
